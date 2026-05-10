@@ -1,0 +1,35 @@
+{
+  "name": "trekr",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Trekr — open source job application tracker. Built with Next.js, Neon, and Clerk.",
+  "license": "GPL-3.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:push": "node lib/db-push.js"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^5.0.0",
+    "@neondatabase/serverless": "^0.9.0",
+    "clsx": "^2.1.0",
+    "date-fns": "^3.6.0",
+    "next": "14.2.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "tailwind-merge": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

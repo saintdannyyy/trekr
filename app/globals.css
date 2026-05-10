@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-brand:        #D97706;
+    --color-brand-light:  #FEF3C7;
+    --color-brand-dark:   #92400E;
+  }
+
+  * {
+    @apply border-stone-200;
+  }
+
+  html {
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+
+  ::-webkit-scrollbar        { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track  { @apply bg-transparent; }
+  ::-webkit-scrollbar-thumb  { @apply bg-stone-300 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-stone-400; }
+}
+
+@layer components {
+  .badge {
+    @apply inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-0.5 rounded-full;
+  }
+  .badge-dot {
+    @apply w-1.5 h-1.5 rounded-full;
+  }
+
+  /* Status badges */
+  .badge-watching   { @apply bg-amber-50   text-amber-700  ; }
+  .badge-applied    { @apply bg-blue-50    text-blue-700   ; }
+  .badge-interview  { @apply bg-orange-50  text-orange-700 ; }
+  .badge-offer      { @apply bg-green-50   text-green-700  ; }
+  .badge-rejected   { @apply bg-red-50     text-red-600    ; }
+  .badge-ghosted    { @apply bg-stone-100  text-stone-500  ; }
+  .badge-closed     { @apply bg-stone-100  text-stone-400  ; }
+  .badge-custom     { @apply bg-purple-50  text-purple-700 ; }
+
+  .dot-watching   { @apply bg-amber-400;  }
+  .dot-applied    { @apply bg-blue-400;   }
+  .dot-interview  { @apply bg-orange-400; }
+  .dot-offer      { @apply bg-green-500;  }
+  .dot-rejected   { @apply bg-red-400;    }
+  .dot-ghosted    { @apply bg-stone-400;  }
+  .dot-closed     { @apply bg-stone-300;  }
+  .dot-custom     { @apply bg-purple-400; }
+
+  /* Input base */
+  .input {
+    @apply w-full px-3 py-2 text-sm bg-white border border-stone-200 rounded-lg
+           text-stone-900 placeholder:text-stone-400
+           focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent
+           transition-shadow duration-150;
+  }
+
+  .label {
+    @apply block text-xs font-medium text-stone-500 uppercase tracking-wide mb-1.5;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600
+           text-white text-sm font-medium rounded-lg transition-colors duration-150
+           focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-1;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-4 py-2 bg-transparent hover:bg-stone-100
+           text-stone-600 text-sm font-medium rounded-lg border border-stone-200
+           transition-colors duration-150
+           focus:outline-none focus:ring-2 focus:ring-stone-300;
+  }
+  .btn-danger {
+    @apply inline-flex items-center gap-2 px-4 py-2 bg-transparent hover:bg-red-50
+           text-red-500 text-sm font-medium rounded-lg border border-red-200
+           transition-colors duration-150;
+  }
+
+  /* Card */
+  .card {
+    @apply bg-white rounded-xl border border-stone-200 shadow-sm;
+  }
+}
