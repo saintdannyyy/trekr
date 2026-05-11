@@ -1,12 +1,11 @@
 import { SignUp } from "@clerk/nextjs";
+import { Logo } from '@/components/site/Logo';
 
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen bg-stone-50 flex items-center justify-center">
-      <div className="text-center mb-8 absolute top-12">
-        <span className="font-semibold text-2xl tracking-tight text-stone-900">
-          Trekr<span className="text-amber-500">.</span>
-        </span>
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+      <div className="mb-8">
+        <Logo />
       </div>
       <SignUp />
     </div>
