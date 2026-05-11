@@ -1,4 +1,12 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const path = require("path");
+
+const nextConfig = {
+  experimental: {
+    turbo: {
+      root: path.resolve(__dirname),
+    },
+  },
+};
 
 module.exports = nextConfig;
