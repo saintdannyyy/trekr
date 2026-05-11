@@ -1,5 +1,5 @@
-import { SignIn } from '@clerk/nextjs';
-import { Logo } from '@/components/site/Logo';
+import { SignIn } from "@clerk/nextjs";
+import { Logo } from "@/components/site/Logo";
 
 export default function SignInPage() {
   return (
