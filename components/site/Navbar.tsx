@@ -88,7 +88,7 @@ export function Navbar() {
       </div>
 
       {open && (
-        className="mx-auto mt-2 max-w-5xl rounded-2xl border border-border bg-background/95 shadow-(--shadow-card) backdrop-blur-xl md:hidden"
+        <div className="mx-auto mt-2 max-w-5xl rounded-2xl border border-border bg-background/95 shadow-(--shadow-card) backdrop-blur-xl md:hidden">
           <div className="mx-auto flex max-w-7xl flex-col gap-1 px-6 py-4">
             {links.map((l) => (
               <a
