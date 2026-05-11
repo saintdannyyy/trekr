@@ -72,7 +72,7 @@ function Hero() {
               <span className="relative z-10">in one place.</span>
               <span
                 aria-hidden
-                className="absolute inset-x-0 bottom-1 -z-0 h-2.5 bg-accent/70 sm:bottom-2 sm:h-4"
+                className="absolute inset-x-0 bottom-1 z-0 h-2.5 bg-accent/70 sm:bottom-2 sm:h-4"
               />
             </span>
           </h1>
@@ -83,7 +83,7 @@ function Hero() {
           <div className="mt-7 flex flex-col items-stretch justify-center gap-3 sm:mt-8 sm:flex-row sm:items-center">
             <Link
               href="/sign-up"
-              className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-accent px-6 text-sm font-semibold text-accent-foreground shadow-[var(--shadow-glow-accent)] transition-transform hover:-translate-y-0.5"
+              className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-accent px-6 text-sm font-semibold text-accent-foreground shadow-(--shadow-glow-accent) transition-transform hover:-translate-y-0.5"
             >
               Get started — it&apos;s free
               <ArrowRight
@@ -186,7 +186,7 @@ function UseCases() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.5 }}
-              className="group relative rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-1 hover:border-brand/40 hover:shadow-[var(--shadow-card)]"
+              className="group relative rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-1 hover:border-brand/40 hover:shadow-(--shadow-card)"
             >
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft text-brand-deep transition-colors group-hover:bg-brand group-hover:text-brand-foreground">
                 <Icon size={18} />
@@ -276,7 +276,7 @@ function FeatureRow({
           {desc}
         </p>
       </div>
-      <div className="relative rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
+      <div className="relative rounded-2xl border border-border bg-card p-6 shadow-(--shadow-card)">
         {visual}
       </div>
     </motion.div>
@@ -483,7 +483,7 @@ function FinalCTA() {
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link
             href="/sign-up"
-            className="inline-flex h-12 items-center gap-2 rounded-xl bg-accent px-6 text-sm font-semibold text-accent-foreground shadow-[var(--shadow-glow-accent)] transition-transform hover:-translate-y-0.5"
+            className="inline-flex h-12 items-center gap-2 rounded-xl bg-accent px-6 text-sm font-semibold text-accent-foreground shadow-(--shadow-glow-accent) transition-transform hover:-translate-y-0.5"
           >
             Create your free account
             <ArrowRight size={16} />
