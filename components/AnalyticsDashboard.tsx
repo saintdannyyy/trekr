@@ -101,12 +101,7 @@ function ChartCard({
 }
 
 export default function AnalyticsDashboard({ data }: { data: AnalyticsData }) {
-  const {
-    applicationsByWeek,
-    statusCounts,
-    rejectionReasons,
-    kpis,
-  } = data;
+  const { applicationsByWeek, statusCounts, rejectionReasons, kpis } = data;
 
   const funnelOrder = [
     "Watching",
@@ -129,7 +124,7 @@ export default function AnalyticsDashboard({ data }: { data: AnalyticsData }) {
   return (
     <div className="space-y-6">
       {/* KPI row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <KpiCard label="Total applications" value={kpis.total} />
         <KpiCard
           label="Response rate"
