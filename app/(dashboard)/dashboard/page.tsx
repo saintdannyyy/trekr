@@ -1,21 +1,35 @@
-import { auth } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
-import sql from '@/lib/db';
-import { Application, ApplicationStatus } from '@/lib/types';
-import DashboardClient from '@/components/DashboardClient';
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import sql from "@/lib/db";
+import { Application, ApplicationStatus } from "@/lib/types";
+import DashboardClient from "@/components/DashboardClient";
 
-async function getApplications(userId: string, status?: string): Promise<Application[]> {
-  if (status) {
+const STANDARD_STATUSES = ['Watching','Applied','Interview','Offer','Rejected','Ghosted','Closed','Custom'];
+
+async function getApplications(
+  userId: string,
+  status?: string,
+): Promise<Application[]> {
+  if (!status) {
     const rows = await sql`
       SELECT * FROM applications
-      WHERE user_id = ${userId} AND status = ${status}
+      WHERE user_id = ${userId}
+      ORDER BY created_at DESC
+    `;
+    return rows as Application[];
+  }
+  // Custom label filter (user-defined value stored in custom_status column)
+  if (!STANDARD_STATUSES.includes(status)) {
+    const rows = await sql`
+      SELECT * FROM applications
+      WHERE user_id = ${userId} AND status = 'Custom' AND custom_status = ${status}
       ORDER BY created_at DESC
     `;
     return rows as Application[];
   }
   const rows = await sql`
     SELECT * FROM applications
-    WHERE user_id = ${userId}
+    WHERE user_id = ${userId} AND status = ${status}
     ORDER BY created_at DESC
   `;
   return rows as Application[];
@@ -34,26 +48,33 @@ async function getStats(userId: string) {
     byStatus[row.status] = row.count;
     total += row.count;
   }
-  const responses = (byStatus['Interview'] || 0) + (byStatus['Offer'] || 0);
-  const applied = byStatus['Applied'] || 0;
+  const responses = (byStatus["Interview"] || 0) + (byStatus["Offer"] || 0);
+  const applied = byStatus["Applied"] || 0;
   return {
     total,
     by_status: byStatus,
-    response_rate: applied + responses > 0 ? Math.round((responses / (applied + responses)) * 100) : 0,
-    offer_rate: responses > 0 ? Math.round(((byStatus['Offer'] || 0) / responses) * 100) : 0,
+    response_rate:
+      applied + responses > 0
+        ? Math.round((responses / (applied + responses)) * 100)
+        : 0,
+    offer_rate:
+      responses > 0
+        ? Math.round(((byStatus["Offer"] || 0) / responses) * 100)
+        : 0,
   };
 }
 
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: { s?: string; q?: string };
+  searchParams: Promise<{ s?: string; q?: string }>;
 }) {
-  const { userId } = auth();
-  if (!userId) redirect('/sign-in');
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
 
+  const { s, q } = await searchParams;
   const [applications, stats] = await Promise.all([
-    getApplications(userId, searchParams.s),
+    getApplications(userId, s),
     getStats(userId),
   ]);
 
@@ -61,7 +82,7 @@ export default async function DashboardPage({
     <DashboardClient
       initialApplications={applications}
       stats={stats}
-      activeStatus={searchParams.s}
+      activeStatus={s}
     />
   );
 }
