@@ -1,13 +1,41 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Application, ApplicationStatus, WorkType } from '@/lib/types';
+import { useState, useEffect } from "react";
+import { Application, ApplicationStatus, WorkType } from "@/lib/types";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const STATUSES: ApplicationStatus[] = [
-  'Watching', 'Applied', 'Interview', 'Offer', 'Rejected', 'Ghosted', 'Closed', 'Custom',
+  "Watching",
+  "Applied",
+  "Interview",
+  "Offer",
+  "Rejected",
+  "Ghosted",
+  "Closed",
+  "Custom",
 ];
 const WORK_TYPES: WorkType[] = [
-  'Full Time', 'Part Time', 'Contract', 'Remote', 'Hybrid', 'On-site',
+  "Full Time",
+  "Part Time",
+  "Contract",
+  "Remote",
+  "Hybrid",
+  "On-site",
 ];
 
 interface Props {
@@ -18,16 +46,29 @@ interface Props {
 }
 
 const empty = {
-  role: '', company: '', status: 'Applied' as ApplicationStatus, custom_status: '',
+  role: "",
+  company: "",
+  status: "Applied" as ApplicationStatus,
+  custom_status: "",
   date_applied: new Date().toISOString().slice(0, 10),
-  location: '', work_type: 'Full Time' as WorkType,
-  job_url: '', salary_min: '', salary_max: '', salary_currency: 'GHS', notes: '',
+  location: "",
+  work_type: "Full Time" as WorkType,
+  job_url: "",
+  salary_min: "",
+  salary_max: "",
+  salary_currency: "GHS",
+  notes: "",
 };
 
-export default function ApplicationModal({ open, onClose, onSaved, existing }: Props) {
+export default function ApplicationModal({
+  open,
+  onClose,
+  onSaved,
+  existing,
+}: Props) {
   const [form, setForm] = useState(empty);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (existing) {
@@ -35,59 +76,65 @@ export default function ApplicationModal({ open, onClose, onSaved, existing }: P
         role: existing.role,
         company: existing.company,
         status: existing.status,
-        custom_status: existing.custom_status || '',
-        date_applied: existing.date_applied?.slice(0, 10) || '',
-        location: existing.location || '',
-        work_type: existing.work_type || 'Full Time',
-        job_url: existing.job_url || '',
-        salary_min: existing.salary_min?.toString() || '',
-        salary_max: existing.salary_max?.toString() || '',
-        salary_currency: existing.salary_currency || 'GHS',
-        notes: existing.notes || '',
+        custom_status: existing.custom_status || "",
+        date_applied: existing.date_applied
+          ? String(existing.date_applied).slice(0, 10)
+          : "",
+        location: existing.location || "",
+        work_type: existing.work_type || "Full Time",
+        job_url: existing.job_url || "",
+        salary_min: existing.salary_min?.toString() || "",
+        salary_max: existing.salary_max?.toString() || "",
+        salary_currency: existing.salary_currency || "GHS",
+        notes: existing.notes || "",
       });
     } else {
       setForm(empty);
     }
-    setError('');
+    setError("");
   }, [existing, open]);
 
   function set(key: string, val: string) {
-    setForm(f => ({ ...f, [key]: val }));
+    setForm((f) => ({ ...f, [key]: val }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.role.trim() || !form.company.trim()) {
-      setError('Role and company are required.');
+      setError("Role and company are required.");
       return;
     }
-    if (form.status === 'Custom' && !form.custom_status.trim()) {
-      setError('Please describe the custom status.');
+    if (form.status === "Custom" && !form.custom_status.trim()) {
+      setError("Please describe the custom status.");
       return;
     }
     setSaving(true);
-    setError('');
+    setError("");
     try {
       const payload = {
         ...form,
         salary_min: form.salary_min ? parseInt(form.salary_min) : null,
         salary_max: form.salary_max ? parseInt(form.salary_max) : null,
-        custom_status: form.status === 'Custom' ? form.custom_status : null,
+        custom_status: form.status === "Custom" ? form.custom_status : null,
       };
       const res = await fetch(
-        existing ? `/api/applications/${existing.id}` : '/api/applications',
+        existing ? `/api/applications/${existing.id}` : "/api/applications",
         {
-          method: existing ? 'PATCH' : 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: existing ? "PATCH" : "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
-        }
+        },
       );
       if (!res.ok) throw new Error(await res.text());
       const saved: Application = await res.json();
       onSaved(saved);
       onClose();
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong. Please try again.');
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.",
+      );
     } finally {
       setSaving(false);
     }
@@ -96,104 +143,193 @@ export default function ApplicationModal({ open, onClose, onSaved, existing }: P
   if (!open) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
-      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o) onClose();
+      }}
     >
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-5 border-b border-stone-100">
-          <h2 className="text-base font-semibold text-stone-900">
-            {existing ? 'Edit application' : 'Add application'}
-          </h2>
-          <button onClick={onClose} className="text-stone-400 hover:text-stone-600 text-xl leading-none">×</button>
-        </div>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>
+            {existing ? "Edit application" : "Add application"}
+          </DialogTitle>
+        </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-1">
           {/* Role + Company */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2">
-              <label className="label">Role title *</label>
-              <input className="input" placeholder="e.g. Frontend Engineer" value={form.role} onChange={e => set('role', e.target.value)} />
+            <div className="col-span-2 space-y-1.5">
+              <Label htmlFor="role">Role title *</Label>
+              <Input
+                id="role"
+                placeholder="e.g. Frontend Engineer"
+                value={form.role}
+                onChange={(e) => set("role", e.target.value)}
+              />
             </div>
-            <div>
-              <label className="label">Company *</label>
-              <input className="input" placeholder="e.g. TheSkillClub" value={form.company} onChange={e => set('company', e.target.value)} />
+            <div className="space-y-1.5">
+              <Label htmlFor="company">Company *</Label>
+              <Input
+                id="company"
+                placeholder="e.g. TheSkillClub"
+                value={form.company}
+                onChange={(e) => set("company", e.target.value)}
+              />
             </div>
-            <div>
-              <label className="label">Date applied</label>
-              <input type="date" className="input" value={form.date_applied} onChange={e => set('date_applied', e.target.value)} />
+            <div className="space-y-1.5">
+              <Label htmlFor="date_applied">Date applied</Label>
+              <Input
+                id="date_applied"
+                type="date"
+                value={form.date_applied}
+                onChange={(e) => set("date_applied", e.target.value)}
+              />
             </div>
           </div>
 
-          {/* Status */}
+          {/* Status + Work type */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="label">Status</label>
-              <select className="input" value={form.status} onChange={e => set('status', e.target.value)}>
-                {STATUSES.map(s => <option key={s}>{s}</option>)}
-              </select>
+            <div className="space-y-1.5">
+              <Label>Status</Label>
+              <Select
+                value={form.status}
+                onValueChange={(v) => set("status", v)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUSES.map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {s}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            <div>
-              <label className="label">Work type</label>
-              <select className="input" value={form.work_type} onChange={e => set('work_type', e.target.value)}>
-                {WORK_TYPES.map(w => <option key={w}>{w}</option>)}
-              </select>
+            <div className="space-y-1.5">
+              <Label>Work type</Label>
+              <Select
+                value={form.work_type}
+                onValueChange={(v) => set("work_type", v)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {WORK_TYPES.map((w) => (
+                    <SelectItem key={w} value={w}>
+                      {w}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          {form.status === 'Custom' && (
-            <div>
-              <label className="label">Describe the status</label>
-              <input className="input" placeholder='e.g. "Waiting on referral from friend"' value={form.custom_status} onChange={e => set('custom_status', e.target.value)} />
+          {form.status === "Custom" && (
+            <div className="space-y-1.5">
+              <Label htmlFor="custom_status">Describe the status</Label>
+              <Input
+                id="custom_status"
+                placeholder='e.g. "Waiting on referral from friend"'
+                value={form.custom_status}
+                onChange={(e) => set("custom_status", e.target.value)}
+              />
             </div>
           )}
 
           {/* Location + URL */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="label">Location</label>
-              <input className="input" placeholder="e.g. Accra · Hybrid" value={form.location} onChange={e => set('location', e.target.value)} />
+            <div className="space-y-1.5">
+              <Label htmlFor="location">Location</Label>
+              <Input
+                id="location"
+                placeholder="e.g. Accra · Hybrid"
+                value={form.location}
+                onChange={(e) => set("location", e.target.value)}
+              />
             </div>
-            <div>
-              <label className="label">Job URL</label>
-              <input type="url" className="input" placeholder="https://..." value={form.job_url} onChange={e => set('job_url', e.target.value)} />
+            <div className="space-y-1.5">
+              <Label htmlFor="job_url">Job URL</Label>
+              <Input
+                id="job_url"
+                type="url"
+                placeholder="https://..."
+                value={form.job_url}
+                onChange={(e) => set("job_url", e.target.value)}
+              />
             </div>
           </div>
 
           {/* Salary */}
-          <div>
-            <label className="label">Salary range (optional)</label>
+          <div className="space-y-1.5">
+            <Label>Salary range (optional)</Label>
             <div className="flex items-center gap-2">
-              <select className="input w-24" value={form.salary_currency} onChange={e => set('salary_currency', e.target.value)}>
-                {['GHS','USD','EUR','GBP','NGN','KES'].map(c => <option key={c}>{c}</option>)}
-              </select>
-              <input type="number" className="input" placeholder="Min" value={form.salary_min} onChange={e => set('salary_min', e.target.value)} />
-              <span className="text-stone-400 text-sm">–</span>
-              <input type="number" className="input" placeholder="Max" value={form.salary_max} onChange={e => set('salary_max', e.target.value)} />
+              <Select
+                value={form.salary_currency}
+                onValueChange={(v) => set("salary_currency", v)}
+              >
+                <SelectTrigger className="w-24 shrink-0">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {["GHS", "USD", "EUR", "GBP", "NGN", "KES"].map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Input
+                type="number"
+                placeholder="Min"
+                value={form.salary_min}
+                onChange={(e) => set("salary_min", e.target.value)}
+              />
+              <span className="text-muted-foreground text-sm shrink-0">–</span>
+              <Input
+                type="number"
+                placeholder="Max"
+                value={form.salary_max}
+                onChange={(e) => set("salary_max", e.target.value)}
+              />
             </div>
           </div>
 
           {/* Notes */}
-          <div>
-            <label className="label">Notes</label>
+          <div className="space-y-1.5">
+            <Label htmlFor="notes">Notes</Label>
             <textarea
-              className="input h-24 resize-none"
+              id="notes"
+              className="input h-24 resize-none w-full"
               placeholder="Contact info, next steps, anything useful..."
               value={form.notes}
-              onChange={e => set('notes', e.target.value)}
+              onChange={(e) => set("notes", e.target.value)}
             />
           </div>
 
-          {error && <p className="text-sm text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+          {error && (
+            <p className="text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-lg">
+              {error}
+            </p>
+          )}
 
           <div className="flex justify-end gap-3 pt-1">
-            <button type="button" className="btn-ghost" onClick={onClose}>Cancel</button>
-            <button type="submit" className="btn-primary" disabled={saving}>
-              {saving ? 'Saving…' : existing ? 'Save changes' : 'Add application'}
-            </button>
+            <Button type="button" variant="ghost" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={saving}>
+              {saving
+                ? "Saving…"
+                : existing
+                  ? "Save changes"
+                  : "Add application"}
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
