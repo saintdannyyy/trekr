@@ -2,6 +2,8 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { Application, ApplicationStatus } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,12 +28,14 @@ const KANBAN_COLUMNS: ApplicationStatus[] = [
 interface Props {
   initialApplications: Application[];
   stats: Record<string, unknown>;
+  weekly: Array<{ label: string; count: number }>;
   activeStatus?: string;
 }
 
 export default function DashboardClient({
   initialApplications,
   stats,
+  weekly,
   activeStatus,
 }: Props) {
   const router = useRouter();
@@ -100,20 +104,20 @@ export default function DashboardClient({
 
   return (
     <>
-      <div className="px-6 py-6 max-w-6xl">
+      <div className="px-4 sm:px-6 py-5 sm:py-6 max-w-6xl">
         {/* Page header */}
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h1 className="font-display text-xl font-semibold text-foreground">
+        <div className="flex items-start justify-between mb-5 gap-3">
+          <div className="min-w-0">
+            <h1 className="font-display text-lg sm:text-xl font-semibold text-foreground">
               {pageTitle}
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">
               {filtered.length} role{filtered.length !== 1 ? "s" : ""}
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            {/* View toggle */}
-            <div className="flex items-center rounded-lg border border-border bg-card p-0.5">
+          <div className="flex items-center gap-2 shrink-0">
+            {/* View toggle — hidden on smallest screens, show list only */}
+            <div className="hidden sm:flex items-center rounded-lg border border-border bg-card p-0.5">
               <button
                 onClick={() => setView("table")}
                 title="Table view"
@@ -144,16 +148,65 @@ export default function DashboardClient({
                 setEditing(null);
                 setModalOpen(true);
               }}
-              className="gap-1.5"
+              className="gap-1.5 text-sm"
+              size="sm"
             >
               <Plus size={14} />
-              Add role
+              <span className="hidden xs:inline">Add role</span>
+              <span className="xs:hidden">Add</span>
             </Button>
           </div>
         </div>
 
         {/* Stats */}
         <StatsBar stats={stats} />
+
+        {/* Mini weekly activity chart */}
+        {weekly.length > 0 && (
+          <div className="mb-2 rounded-xl border border-border bg-card px-4 pt-3 pb-2">
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-xs font-medium text-muted-foreground">
+                Activity (last 10 weeks)
+              </p>
+              <Link
+                href="/dashboard/analytics"
+                className="text-xs text-brand hover:text-brand-deep font-medium transition-colors"
+              >
+                View analytics →
+              </Link>
+            </div>
+            <ResponsiveContainer width="100%" height={56}>
+              <BarChart data={weekly} barSize={10}>
+                <XAxis
+                  dataKey="label"
+                  tick={{
+                    fontSize: 9,
+                    fill: "var(--color-muted-foreground,#6b7280)",
+                  }}
+                  axisLine={false}
+                  tickLine={false}
+                  interval="preserveStartEnd"
+                />
+                <Tooltip
+                  cursor={{ fill: "transparent" }}
+                  contentStyle={{
+                    fontSize: 11,
+                    borderRadius: 8,
+                    border: "1px solid var(--color-border,#e5e7eb)",
+                    background: "var(--color-card,#fff)",
+                  }}
+                  itemStyle={{ color: "var(--color-foreground,#111)" }}
+                />
+                <Bar
+                  dataKey="count"
+                  name="Applications"
+                  fill="#6366f1"
+                  radius={[3, 3, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
 
         {/* Search */}
         <div className="relative mb-4">
@@ -164,7 +217,7 @@ export default function DashboardClient({
           <Input
             type="text"
             className="pl-9"
-            placeholder="Search roles, companies, notes…"
+            placeholder="Search roles, companies…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -226,26 +279,23 @@ function TableView({
             <tr className="bg-muted border-b border-border">
               {(
                 [
-                  { col: "role" as keyof Application, label: "Role" },
-                  { col: "status" as keyof Application, label: "Status" },
-                  {
-                    col: "date_applied" as keyof Application,
-                    label: "Applied",
-                  },
-                  { col: "location" as keyof Application, label: "Location" },
-                  { col: "work_type" as keyof Application, label: "Type" },
-                ] as { col: keyof Application; label: string }[]
-              ).map(({ col, label }) => (
+                  { col: "role" as keyof Application, label: "Role", cls: "" },
+                  { col: "status" as keyof Application, label: "Status", cls: "" },
+                  { col: "date_applied" as keyof Application, label: "Applied", cls: "hidden sm:table-cell" },
+                  { col: "location" as keyof Application, label: "Location", cls: "hidden md:table-cell" },
+                  { col: "work_type" as keyof Application, label: "Type", cls: "hidden lg:table-cell" },
+                ] as { col: keyof Application; label: string; cls: string }[]
+              ).map(({ col, label, cls }) => (
                 <th
                   key={col}
-                  className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide px-4 py-3 cursor-pointer select-none hover:text-foreground transition-colors"
+                  className={cn("text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide px-4 py-3 cursor-pointer select-none hover:text-foreground transition-colors", cls)}
                   onClick={() => sort(col)}
                 >
                   {label}
                   {arrow(col)}
                 </th>
               ))}
-              <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                 Notes
               </th>
               <th className="w-10" />
@@ -272,18 +322,18 @@ function TableView({
                     customStatus={app.custom_status ?? undefined}
                   />
                 </td>
-                <td className="px-4 py-3 text-muted-foreground tabular-nums whitespace-nowrap">
+                <td className="hidden sm:table-cell px-4 py-3 text-muted-foreground tabular-nums whitespace-nowrap">
                   {app.date_applied
                     ? format(new Date(app.date_applied), "d MMM yy")
                     : "—"}
                 </td>
-                <td className="px-4 py-3 text-muted-foreground max-w-35 truncate">
+                <td className="hidden md:table-cell px-4 py-3 text-muted-foreground max-w-35 truncate">
                   {app.location || "—"}
                 </td>
-                <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
+                <td className="hidden lg:table-cell px-4 py-3 text-muted-foreground whitespace-nowrap">
                   {app.work_type || "—"}
                 </td>
-                <td className="px-4 py-3 max-w-45">
+                <td className="hidden lg:table-cell px-4 py-3 max-w-45">
                   <p className="text-muted-foreground text-xs truncate italic">
                     {app.notes || "—"}
                   </p>
