@@ -34,6 +34,7 @@ import {
 } from "@/lib/types";
 import StatusBadge from "@/components/ui/StatusBadge";
 import ApplicationModal from "@/components/ApplicationModal";
+import ApplicationTimeline from "@/components/ApplicationTimeline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,7 +47,13 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-type Tab = "overview" | "interviews" | "contacts" | "documents" | "reminders";
+type Tab =
+  | "overview"
+  | "interviews"
+  | "contacts"
+  | "documents"
+  | "reminders"
+  | "timeline";
 
 const ROUND_TYPES: InterviewRoundType[] = [
   "Phone Screen",
@@ -278,28 +285,29 @@ export default function ApplicationDetail({
       key: "reminders",
       label: `Reminders${pendingReminders ? ` (${pendingReminders})` : ""}`,
     },
+    { key: "timeline", label: "Timeline" },
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      {/* Sticky header */}
-      <div className="sticky top-0 z-10 bg-card border-b border-border">
-        <div className="px-8 pt-5 pb-0 max-w-5xl mx-auto">
+      {/* Sticky header — offset for mobile top bar */}
+      <div className="sticky top-14 lg:top-0 z-10 bg-card border-b border-border">
+        <div className="px-4 sm:px-8 pt-4 sm:pt-5 pb-0 max-w-5xl mx-auto">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-3"
           >
             <ChevronLeft size={14} />
             Dashboard
           </Link>
 
-          <div className="flex items-start justify-between gap-4 pb-4">
-            <div className="min-w-0">
-              <h1 className="font-display text-2xl font-semibold text-foreground leading-tight truncate">
+          <div className="flex items-start justify-between gap-3 pb-4">
+            <div className="min-w-0 flex-1">
+              <h1 className="font-display text-xl sm:text-2xl font-semibold text-foreground leading-tight">
                 {app.role}
               </h1>
               <p className="text-brand font-medium mt-0.5">{app.company}</p>
-              <div className="flex items-center gap-2 mt-2.5 flex-wrap">
+              <div className="flex items-center gap-2 mt-2 flex-wrap">
                 <StatusBadge
                   status={app.status}
                   customStatus={app.custom_status ?? undefined}
@@ -350,8 +358,8 @@ export default function ApplicationDetail({
                 size="sm"
                 onClick={() => setEditOpen(true)}
               >
-                <Pencil size={13} className="mr-1.5" />
-                Edit
+                <Pencil size={13} className="sm:mr-1.5" />
+                <span className="hidden sm:inline">Edit</span>
               </Button>
               <Button
                 size="sm"
@@ -359,20 +367,20 @@ export default function ApplicationDetail({
                 onClick={handleDelete}
                 disabled={deleting}
               >
-                <Trash2 size={13} className="mr-1.5" />
-                {deleting ? "Deleting…" : "Delete"}
+                <Trash2 size={13} className="sm:mr-1.5" />
+                <span className="hidden sm:inline">{deleting ? "Deleting…" : "Delete"}</span>
               </Button>
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="flex overflow-x-auto">
+          {/* Tabs — horizontally scrollable */}
+          <div className="flex overflow-x-auto gap-1 pb-px hide-scrollbar">
             {tabs.map((t) => (
               <button
                 key={t.key}
                 onClick={() => setTab(t.key)}
                 className={cn(
-                  "text-sm font-medium py-3 px-0.5 mr-6 border-b-2 whitespace-nowrap transition-colors",
+                  "text-sm font-medium py-3 px-1 mr-4 border-b-2 whitespace-nowrap transition-colors shrink-0",
                   tab === t.key
                     ? "border-brand text-brand"
                     : "border-transparent text-muted-foreground hover:text-foreground",
@@ -386,7 +394,7 @@ export default function ApplicationDetail({
       </div>
 
       {/* Tab content */}
-      <div className="flex-1 px-8 py-6 max-w-5xl mx-auto w-full">
+      <div className="flex-1 px-4 sm:px-8 py-5 sm:py-6 max-w-5xl mx-auto w-full">
         {tab === "overview" && <OverviewTab app={app} />}
         {tab === "interviews" && (
           <InterviewsTab
@@ -426,6 +434,7 @@ export default function ApplicationDetail({
             onDelete={deleteReminder}
           />
         )}
+        {tab === "timeline" && <ApplicationTimeline appId={app.id} />}
       </div>
 
       <ApplicationModal

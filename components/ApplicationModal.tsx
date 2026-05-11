@@ -58,6 +58,7 @@ const empty = {
   salary_max: "",
   salary_currency: "GHS",
   notes: "",
+  rejection_reason: "",
 };
 
 export default function ApplicationModal({
@@ -87,6 +88,7 @@ export default function ApplicationModal({
         salary_max: existing.salary_max?.toString() || "",
         salary_currency: existing.salary_currency || "GHS",
         notes: existing.notes || "",
+        rejection_reason: "",
       });
     } else {
       setForm(empty);
@@ -116,6 +118,8 @@ export default function ApplicationModal({
         salary_min: form.salary_min ? parseInt(form.salary_min) : null,
         salary_max: form.salary_max ? parseInt(form.salary_max) : null,
         custom_status: form.status === "Custom" ? form.custom_status : null,
+        rejection_reason:
+          form.status === "Rejected" ? form.rejection_reason : undefined,
       };
       const res = await fetch(
         existing ? `/api/applications/${existing.id}` : "/api/applications",
@@ -236,6 +240,19 @@ export default function ApplicationModal({
                 placeholder='e.g. "Waiting on referral from friend"'
                 value={form.custom_status}
                 onChange={(e) => set("custom_status", e.target.value)}
+              />
+            </div>
+          )}
+
+          {form.status === "Rejected" && (
+            <div className="space-y-1.5">
+              <Label htmlFor="rejection_reason">Reason for rejection</Label>
+              <textarea
+                id="rejection_reason"
+                className="input h-16 resize-none w-full"
+                placeholder="e.g. Overqualified, salary mismatch, went with another candidate…"
+                value={form.rejection_reason}
+                onChange={(e) => set("rejection_reason", e.target.value)}
               />
             </div>
           )}
