@@ -1,8 +1,10 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import sql from "@/lib/db";
 import { Application, ApplicationStatus } from "@/lib/types";
 import DashboardClient from "@/components/DashboardClient";
+import { DashboardPageSkeleton } from "@/components/ui/page-skeletons";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -86,9 +88,24 @@ export default async function DashboardPage({
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
-  const { s, q } = await searchParams;
+  const { s } = await searchParams;
+
+  return (
+    <Suspense fallback={<DashboardPageSkeleton />}>
+      <DashboardContent userId={userId} activeStatus={s} />
+    </Suspense>
+  );
+}
+
+async function DashboardContent({
+  userId,
+  activeStatus,
+}: {
+  userId: string;
+  activeStatus?: string;
+}) {
   const [applications, stats] = await Promise.all([
-    getApplications(userId, s),
+    getApplications(userId, activeStatus),
     getStats(userId),
   ]);
 
@@ -96,7 +113,9 @@ export default async function DashboardPage({
     <DashboardClient
       initialApplications={applications}
       stats={stats}
-      activeStatus={s}
+      activeStatus={activeStatus}
     />
+  );
+}
   );
 }
