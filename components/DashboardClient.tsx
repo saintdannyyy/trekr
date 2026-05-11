@@ -358,8 +358,11 @@ function KanbanView({
             {byStatus[col].map((app) => (
               <div
                 key={app.id}
+                role="button"
+                tabIndex={0}
                 className="card p-3 cursor-pointer hover:border-brand/30 hover:shadow-md transition-all group"
                 onClick={() => onCardClick(app)}
+                onKeyDown={(e) => e.key === "Enter" && onCardClick(app)}
               >
                 <p className="text-sm font-medium text-foreground leading-tight line-clamp-2">
                   {app.role}
