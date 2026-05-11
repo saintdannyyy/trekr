@@ -5,7 +5,7 @@
   "description": "Trekr — open source job application tracker. Built with Next.js, Neon, and Clerk.",
   "license": "GPL-3.0",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
