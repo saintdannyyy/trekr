@@ -91,7 +91,7 @@ export default async function DashboardPage({
   const { s } = await searchParams;
 
   return (
-    <Suspense fallback={<DashboardPageSkeleton />}>
+    <Suspense key={s ?? "all"} fallback={<DashboardPageSkeleton />}>
       <DashboardContent userId={userId} activeStatus={s} />
     </Suspense>
   );
