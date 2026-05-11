@@ -3,6 +3,21 @@ import { redirect, notFound } from "next/navigation";
 import sql from "@/lib/db";
 import ApplicationDetail from "@/components/ApplicationDetail";
 import type { Application } from "@/lib/types";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { userId } = await auth();
+  if (!userId) return {};
+  const { id } = await params;
+  const [row] =
+    await sql`SELECT role, company FROM applications WHERE id = ${id} AND user_id = ${userId}`;
+  if (!row) return { title: "Application — Trekr" };
+  return { title: `${row.role} at ${row.company} — Trekr` };
+}
 
 async function getApplication(
   id: string,
