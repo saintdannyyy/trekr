@@ -5,9 +5,9 @@ export const metadata: Metadata = { title: "Timeline — Trekr" };
 
 export default function TimelinePage() {
   return (
-    <div className="px-6 py-6">
-      <div className="mb-6">
-        <h1 className="font-display text-xl font-semibold text-foreground">
+    <div className="px-4 sm:px-6 py-5 sm:py-6">
+      <div className="mb-5 sm:mb-6">
+        <h1 className="font-display text-lg sm:text-xl font-semibold text-foreground">
           Timeline
         </h1>
         <p className="text-sm text-muted-foreground mt-0.5">
