@@ -13,6 +13,16 @@ const links = [
   { href: "#faq", label: "FAQ" },
 ];
 
+function scrollTo(href: string, onDone?: () => void) {
+  const id = href.replace("#", "");
+  const el = document.getElementById(id);
+  if (!el) return;
+  const offset = 88; // fixed navbar height + breathing room
+  const top = el.getBoundingClientRect().top + window.scrollY - offset;
+  window.scrollTo({ top, behavior: "smooth" });
+  onDone?.();
+}
+
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -37,13 +47,13 @@ export function Navbar() {
 
         <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 md:flex">
           {links.map((l) => (
-            <a
+            <button
               key={l.href}
-              href={l.href}
+              onClick={() => scrollTo(l.href)}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               {l.label}
-            </a>
+            </button>
           ))}
         </nav>
 
@@ -91,14 +101,13 @@ export function Navbar() {
         <div className="mx-auto mt-2 max-w-5xl rounded-2xl border border-border bg-background/95 shadow-(--shadow-card) backdrop-blur-xl md:hidden">
           <div className="mx-auto flex max-w-7xl flex-col gap-1 px-6 py-4">
             {links.map((l) => (
-              <a
+              <button
                 key={l.href}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
+                onClick={() => scrollTo(l.href, () => setOpen(false))}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-left text-foreground hover:bg-muted"
               >
                 {l.label}
-              </a>
+              </button>
             ))}
             <div className="mt-2 flex flex-col gap-2 border-t border-border pt-3">
               <SignedOut>
