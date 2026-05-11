@@ -25,13 +25,13 @@ Trekr is an open source job application tracker built for job seekers who want c
 
 ## Tech Stack
 
-| Layer    | Technology                          |
-|----------|-------------------------------------|
+| Layer    | Technology                            |
+| -------- | ------------------------------------- |
 | Frontend | Next.js 14 (App Router), Tailwind CSS |
-| Backend  | Next.js API Routes                  |
-| Database | Neon (serverless PostgreSQL)        |
-| Auth     | Clerk (Google SSO)                  |
-| Hosting  | Vercel                              |
+| Backend  | Next.js API Routes                    |
+| Database | Neon (serverless PostgreSQL)          |
+| Auth     | Clerk (Google SSO)                    |
+| Hosting  | Vercel                                |
 
 ---
 
@@ -146,11 +146,35 @@ Please keep PRs focused — one feature or fix per PR.
 
 ## Roadmap
 
-- [ ] Email / browser reminders
-- [ ] Kanban board view
+### Notifications
+
+- [ ] Welcome email on sign-up (Resend / SendGrid)
+- [ ] Reminder email notifications — fire when `remind_at` passes
+- [ ] Web push notifications — service worker + VAPID + Vercel Cron polling `WHERE done = FALSE AND remind_at <= NOW()`
+
+### Sub-resource editing
+
+- [ ] Edit contacts (PATCH `/api/contacts/:id` + inline edit UI)
+- [ ] Edit documents (PATCH `/api/documents/:id` + inline edit UI)
+- [ ] Edit interview rounds — type, date, notes (PATCH endpoint already accepts all fields; UI only exposes outcome)
+- [ ] Edit reminders — message and datetime (PATCH endpoint already accepts all fields; UI only exposes toggle)
+
+### Dashboard UX
+
+- [ ] Overdue reminder highlighting — visual warning badge when `remind_at` has passed
+- [ ] Pagination / cursor-based loading — dashboard currently fetches all rows in one query
+- [ ] Bulk actions — multi-select rows to delete or move status at once
+- [ ] Salary display — surface `salary_min`, `salary_max`, `salary_currency` in the Overview tab stats
+
+### Data & insights
+
+- [ ] Application notes / activity log — timestamped status-change history per application
+- [ ] Analytics dashboard — application trends, response rates, time-to-offer over time
 - [ ] CSV export
+
+### Growth
+
 - [ ] Mobile app (React Native)
-- [ ] Analytics dashboard (application trends over time)
 - [ ] Team / shared boards
 
 ---
