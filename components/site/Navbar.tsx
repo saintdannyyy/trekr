@@ -29,7 +29,7 @@ export function Navbar() {
       <div
         className={`mx-auto flex h-14 max-w-5xl items-center justify-between rounded-full border px-3 pl-5 transition-all duration-300 sm:h-16 sm:pl-6 ${
           scrolled
-            ? "border-border/70 bg-background/85 shadow-[var(--shadow-card)] backdrop-blur-xl"
+            ? "border-border/70 bg-background/85 shadow-(--shadow-card) backdrop-blur-xl"
             : "border-border/50 bg-background/60 backdrop-blur-md"
         }`}
       >
@@ -88,7 +88,7 @@ export function Navbar() {
       </div>
 
       {open && (
-        <div className="mx-auto mt-2 max-w-5xl rounded-2xl border border-border bg-background/95 shadow-[var(--shadow-card)] backdrop-blur-xl md:hidden">
+        className="mx-auto mt-2 max-w-5xl rounded-2xl border border-border bg-background/95 shadow-(--shadow-card) backdrop-blur-xl md:hidden"
           <div className="mx-auto flex max-w-7xl flex-col gap-1 px-6 py-4">
             {links.map((l) => (
               <a
