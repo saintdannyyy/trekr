@@ -4,7 +4,7 @@ import sql from '@/lib/db';
 
 // ── Interview Rounds ──────────────────────────────────────────────
 export async function postInterviewRound(req: NextRequest, applicationId: string) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const body = await req.json();
   const { round_number, round_type, scheduled_at, notes, outcome } = body;
@@ -32,7 +32,7 @@ export async function patchInterviewRound(roundId: string, userId: string, body:
 
 // ── Contacts ──────────────────────────────────────────────────────
 export async function postContact(req: NextRequest, applicationId: string) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const body = await req.json();
   const { name, title, email, linkedin_url, notes } = body;
@@ -48,7 +48,7 @@ export async function postContact(req: NextRequest, applicationId: string) {
 
 // ── Documents ─────────────────────────────────────────────────────
 export async function postDocument(req: NextRequest, applicationId: string) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const body = await req.json();
   const { doc_type, label, file_url } = body;
@@ -63,7 +63,7 @@ export async function postDocument(req: NextRequest, applicationId: string) {
 
 // ── Reminders ─────────────────────────────────────────────────────
 export async function postReminder(req: NextRequest, applicationId: string) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const body = await req.json();
   const { message, remind_at } = body;
