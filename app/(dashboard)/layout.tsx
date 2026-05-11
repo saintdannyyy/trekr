@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Suspense } from "react";
 import { Settings } from "lucide-react";
 import SidebarNavLinks from "@/components/SidebarNavLinks";
+import PushNotificationManager from "@/components/PushNotificationManager";
 import sql from "@/lib/db";
 
 async function getCustomStatuses(userId: string): Promise<string[]> {
@@ -55,6 +56,7 @@ export default async function DashboardLayout({
 
         {/* Bottom */}
         <div className="px-3 py-4 border-t border-border shrink-0 space-y-0.5">
+          <PushNotificationManager />
           <Link
             href="/dashboard/settings"
             className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
