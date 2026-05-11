@@ -1,7 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect, notFound } from "next/navigation";
+import { Suspense } from "react";
 import sql from "@/lib/db";
 import ApplicationDetail from "@/components/ApplicationDetail";
+import { DetailPageSkeleton } from "@/components/ui/page-skeletons";
 import type { Application } from "@/lib/types";
 import type { Metadata } from "next";
 
@@ -50,8 +52,22 @@ export default async function ApplicationDetailPage({
   if (!userId) redirect("/sign-in");
 
   const { id } = await params;
+
+  return (
+    <Suspense fallback={<DetailPageSkeleton />}>
+      <ApplicationDetailContent id={id} userId={userId} />
+    </Suspense>
+  );
+}
+
+async function ApplicationDetailContent({
+  id,
+  userId,
+}: {
+  id: string;
+  userId: string;
+}) {
   const application = await getApplication(id, userId);
   if (!application) notFound();
-
   return <ApplicationDetail initialData={application} />;
 }
