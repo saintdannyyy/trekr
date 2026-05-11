@@ -3,6 +3,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -44,6 +45,7 @@ export default function RootLayout({
         <body className="bg-background text-foreground antialiased">
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster richColors position="top-right" />
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
