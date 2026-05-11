@@ -6,6 +6,15 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Hide scrollbar but keep scrollability */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @theme inline {
   --font-sans: var(--font-inter, "Inter", ui-sans-serif, system-ui, sans-serif);
   --font-display: var(--font-space-grotesk, "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif);
