@@ -52,15 +52,27 @@ async function getApplications(
 }
 
 async function getStats(userId: string) {
-  const rows = await sql`
-    SELECT status, COUNT(*)::int as count
-    FROM applications
-    WHERE user_id = ${userId}
-    GROUP BY status
-  `;
+  const [statusRows, weeklyRows] = await Promise.all([
+    sql`
+      SELECT status, COUNT(*)::int as count
+      FROM applications
+      WHERE user_id = ${userId}
+      GROUP BY status
+    `,
+    sql`
+      SELECT
+        TO_CHAR(DATE_TRUNC('week', created_at), 'MM/DD') AS label,
+        COUNT(*)::int AS count
+      FROM applications
+      WHERE user_id = ${userId}
+        AND created_at >= NOW() - INTERVAL '10 weeks'
+      GROUP BY DATE_TRUNC('week', created_at), label
+      ORDER BY DATE_TRUNC('week', created_at)
+    `,
+  ]);
   const byStatus: Record<string, number> = {};
   let total = 0;
-  for (const row of rows) {
+  for (const row of statusRows) {
     byStatus[row.status] = row.count;
     total += row.count;
   }
@@ -77,6 +89,10 @@ async function getStats(userId: string) {
       responses > 0
         ? Math.round(((byStatus["Offer"] || 0) / responses) * 100)
         : 0,
+    weekly: weeklyRows.map((r) => ({
+      label: r.label as string,
+      count: r.count as number,
+    })),
   };
 }
 
@@ -113,6 +129,7 @@ async function DashboardContent({
     <DashboardClient
       initialApplications={applications}
       stats={stats}
+      weekly={stats.weekly}
       activeStatus={activeStatus}
     />
   );
