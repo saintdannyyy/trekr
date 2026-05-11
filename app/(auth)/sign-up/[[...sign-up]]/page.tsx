@@ -1,5 +1,5 @@
 import { SignUp } from "@clerk/nextjs";
-import { Logo } from '@/components/site/Logo';
+import { Logo } from "@/components/site/Logo";
 
 export default function SignUpPage() {
   return (
