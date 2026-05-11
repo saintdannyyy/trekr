@@ -4,7 +4,16 @@ import sql from "@/lib/db";
 import { Application, ApplicationStatus } from "@/lib/types";
 import DashboardClient from "@/components/DashboardClient";
 
-const STANDARD_STATUSES = ['Watching','Applied','Interview','Offer','Rejected','Ghosted','Closed','Custom'];
+const STANDARD_STATUSES = [
+  "Watching",
+  "Applied",
+  "Interview",
+  "Offer",
+  "Rejected",
+  "Ghosted",
+  "Closed",
+  "Custom",
+];
 
 async function getApplications(
   userId: string,
