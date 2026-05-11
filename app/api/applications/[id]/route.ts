@@ -45,7 +45,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     role, company, status, custom_status,
     date_applied, location, work_type,
     job_url, salary_min, salary_max, salary_currency, notes,
+    rejection_reason,
   } = body;
+
+  // Capture old status for change-logging
+  const [current] = await sql`SELECT status FROM applications WHERE id = ${id} AND user_id = ${userId}`;
+  if (!current) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  const oldStatus = current.status as string;
 
   const [row] = await sql`
     UPDATE applications SET
@@ -66,6 +72,41 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   `;
 
   if (!row) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+  // Auto-log status changes and rejection reasons (best-effort)
+  if (status && status !== oldStatus) {
+    try {
+      await sql`
+        CREATE TABLE IF NOT EXISTS application_updates (
+          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+          application_id UUID NOT NULL REFERENCES applications(id) ON DELETE CASCADE,
+          user_id TEXT NOT NULL, type TEXT NOT NULL, message TEXT NOT NULL,
+          metadata JSONB DEFAULT '{}', created_at TIMESTAMPTZ DEFAULT NOW()
+        )
+      `;
+      await sql`
+        INSERT INTO application_updates (application_id, user_id, type, message, metadata)
+        VALUES (
+          ${id}, ${userId}, 'status_change',
+          ${`Status changed from ${oldStatus} to ${status}`},
+          ${JSON.stringify({ from: oldStatus, to: status })}
+        )
+      `;
+      if (status === 'Rejected' && rejection_reason?.trim()) {
+        await sql`
+          INSERT INTO application_updates (application_id, user_id, type, message, metadata)
+          VALUES (
+            ${id}, ${userId}, 'rejection',
+            ${rejection_reason.trim()},
+            ${JSON.stringify({ reason: rejection_reason.trim() })}
+          )
+        `;
+      }
+    } catch {
+      // Never fail the main request due to logging
+    }
+  }
+
   return NextResponse.json(row);
 }
 
