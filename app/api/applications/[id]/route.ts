@@ -2,10 +2,11 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import sql from '@/lib/db';
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
-  const { userId } = auth();
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+  const { id } = await params;
   const [row] = await sql`
     SELECT
       a.*,
@@ -26,7 +27,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     LEFT JOIN contacts c ON c.application_id = a.id
     LEFT JOIN documents d ON d.application_id = a.id
     LEFT JOIN reminders r ON r.application_id = a.id
-    WHERE a.id = ${params.id} AND a.user_id = ${userId}
+    WHERE a.id = ${id} AND a.user_id = ${userId}
     GROUP BY a.id
   `;
 
@@ -34,10 +35,11 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   return NextResponse.json(row);
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const { userId } = auth();
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+  const { id } = await params;
   const body = await req.json();
   const {
     role, company, status, custom_status,
@@ -59,7 +61,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       salary_max      = ${salary_max ?? null},
       salary_currency = COALESCE(${salary_currency || null}, salary_currency),
       notes           = COALESCE(${notes || null}, notes)
-    WHERE id = ${params.id} AND user_id = ${userId}
+    WHERE id = ${id} AND user_id = ${userId}
     RETURNING *
   `;
 
@@ -67,13 +69,14 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   return NextResponse.json(row);
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
-  const { userId } = auth();
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+  const { id } = await params;
   const [row] = await sql`
     DELETE FROM applications
-    WHERE id = ${params.id} AND user_id = ${userId}
+    WHERE id = ${id} AND user_id = ${userId}
     RETURNING id
   `;
 
