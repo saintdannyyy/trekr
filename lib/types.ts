@@ -8,6 +8,14 @@ export type ApplicationStatus =
   | 'Closed'
   | 'Custom';
 
+export type UpdateType =
+  | 'note'
+  | 'status_change'
+  | 'follow_up'
+  | 'rejection'
+  | 'interview_note'
+  | 'offer_note';
+
 export type WorkType =
   | 'Full Time'
   | 'Part Time'
@@ -93,6 +101,16 @@ export interface Reminder {
   message: string;
   remind_at: string;
   done: boolean;
+  created_at: string;
+}
+
+export interface ApplicationUpdate {
+  id: string;
+  application_id: string;
+  user_id: string;
+  type: UpdateType;
+  message: string;
+  metadata: Record<string, string>;
   created_at: string;
 }
 
