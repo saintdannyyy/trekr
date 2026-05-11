@@ -3,6 +3,11 @@ import { redirect } from "next/navigation";
 import sql from "@/lib/db";
 import { Application, ApplicationStatus } from "@/lib/types";
 import DashboardClient from "@/components/DashboardClient";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard — Trekr",
+};
 
 const STANDARD_STATUSES = [
   "Watching",
