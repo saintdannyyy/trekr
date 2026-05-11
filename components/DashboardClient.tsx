@@ -277,13 +277,13 @@ function TableView({
                     ? format(new Date(app.date_applied), "d MMM yy")
                     : "—"}
                 </td>
-                <td className="px-4 py-3 text-muted-foreground max-w-[140px] truncate">
+                <td className="px-4 py-3 text-muted-foreground max-w-35 truncate">
                   {app.location || "—"}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
                   {app.work_type || "—"}
                 </td>
-                <td className="px-4 py-3 max-w-[180px]">
+                <td className="px-4 py-3 max-w-45">
                   <p className="text-muted-foreground text-xs truncate italic">
                     {app.notes || "—"}
                   </p>
@@ -345,7 +345,7 @@ function KanbanView({
   return (
     <div className="flex gap-3 overflow-x-auto pb-4">
       {KANBAN_COLUMNS.map((col) => (
-        <div key={col} className="flex-shrink-0 w-56">
+        <div key={col} className="shrink-0 w-56">
           <div className="flex items-center justify-between mb-2 px-1">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
               {col}
