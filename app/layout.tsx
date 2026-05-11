@@ -12,6 +12,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://trekr.vercel.app"),
   title: "Trekr — Track every application. Land what's next.",
   description:
     "Track every application, interview, and offer. Stay organised, stay ahead.",
@@ -20,10 +21,15 @@ export const metadata: Metadata = {
     apple: "/icon.png",
   },
   openGraph: {
-    title: "Trekr",
-    description: "Track every application, interview, and offer.",
+    title: "Trekr — Track every application. Land what's next.",
+    description: "Track every application, interview, and offer. Stay organised, stay ahead.",
     type: "website",
-    images: [{ url: "/logo.png" }],
+    siteName: "Trekr",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Trekr — Track every application. Land what's next.",
+    description: "Track every application, interview, and offer. Stay organised, stay ahead.",
   },
 };
 
