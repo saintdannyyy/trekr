@@ -11,9 +11,7 @@ import {
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding)
-    .replace(/-/g, "+")
-    .replace(/_/g, "/");
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
   const rawData = window.atob(base64);
   const view = new Uint8Array(rawData.length);
   for (let i = 0; i < rawData.length; i++) {
@@ -100,7 +98,9 @@ export default function PushNotificationManager() {
     } catch (e) {
       console.error("Push subscribe error:", e);
       if (e instanceof Error && e.name === "AbortError") {
-        toast.error("Push service unavailable. Try again or check your browser settings.");
+        toast.error(
+          "Push service unavailable. Try again or check your browser settings.",
+        );
       } else if (e instanceof Error && e.name === "NotAllowedError") {
         toast.error("Notifications blocked. Enable them in browser settings.");
       } else {
