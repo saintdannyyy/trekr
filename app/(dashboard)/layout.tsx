@@ -77,9 +77,7 @@ export default async function DashboardLayout({
 
       {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 inset-x-0 z-30 h-14 bg-card border-b border-border flex items-center justify-between px-4 shrink-0">
-        <MobileSidebarToggle>
-          {sidebarContent}
-        </MobileSidebarToggle>
+        <MobileSidebarToggle>{sidebarContent}</MobileSidebarToggle>
         <Link href="/" className="absolute left-1/2 -translate-x-1/2">
           <Image
             src="/logo.png"
