@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { BarChart2, GitBranch } from "lucide-react";
+import { BarChart2, GitBranch, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -128,6 +128,18 @@ export default function SidebarNavLinks({
         >
           <BarChart2 size={13} className="shrink-0" />
           Analytics
+        </Link>
+        <Link
+          href="/dashboard/notifications"
+          className={cn(
+            "flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm transition-colors",
+            pathname === "/dashboard/notifications"
+              ? "bg-brand/10 text-brand font-medium"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground",
+          )}
+        >
+          <Bell size={13} className="shrink-0" />
+          Notifications
         </Link>
       </div>
     </nav>
