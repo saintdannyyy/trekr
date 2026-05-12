@@ -78,7 +78,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     try {
       await sql`
         CREATE TABLE IF NOT EXISTS application_updates (
-          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
           application_id UUID NOT NULL REFERENCES applications(id) ON DELETE CASCADE,
           user_id TEXT NOT NULL, type TEXT NOT NULL, message TEXT NOT NULL,
           metadata JSONB DEFAULT '{}', created_at TIMESTAMPTZ DEFAULT NOW()
